@@ -1,28 +1,20 @@
 package tests;
 
 import org.hamcrest.MatcherAssert;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import pageobject.MainPage;
-
 import static org.hamcrest.CoreMatchers.equalTo;
-
-
+import static pageobject.ConstantsForAccordion.*;
 
 @RunWith(Parameterized.class)
 
-public class MainPageAccordionTest {
-    private WebDriver driver;
-    private final int indexNumber;
-    private final String expectedAccordionHeader;
-    private final String expectedAccordionText;
-    private final static String MAIN_PAGE_URL = "https://qa-scooter.praktikum-services.ru/";
+public class MainPageAccordionTest extends BaseTest {
+
+    public int indexNumber;
+    public String expectedAccordionHeader;
+    public String expectedAccordionText;
 
     public MainPageAccordionTest(int indexNumber, String expectedAccordionHeader, String expectedAccordionText) {
         this.indexNumber = indexNumber;
@@ -33,46 +25,34 @@ public class MainPageAccordionTest {
     @Parameterized.Parameters
     public static Object[][] headersAndText() {
         return new Object[][]{
-                {0, "Сколько это стоит? И как оплатить?", "Сутки — 400 рублей. Оплата курьеру — наличными или картой."},
-                {1, "Хочу сразу несколько самокатов! Так можно?", "Пока что у нас так: один заказ — один самокат. Если хотите покататься с друзьями, можете просто сделать несколько заказов — один за другим."},
-                {2, "Как рассчитывается время аренды?", "Допустим, вы оформляете заказ на 8 мая. Мы привозим самокат 8 мая в течение дня. Отсчёт времени аренды начинается с момента, когда вы оплатите заказ курьеру. Если мы привезли самокат 8 мая в 20:30, суточная аренда закончится 9 мая в 20:30."},
-                {3, "Можно ли заказать самокат прямо на сегодня?", "Только начиная с завтрашнего дня. Но скоро станем расторопнее."},
-                {4, "Можно ли продлить заказ или вернуть самокат раньше?", "Пока что нет! Но если что-то срочное — всегда можно позвонить в поддержку по красивому номеру 1010."},
-                {5, "Вы привозите зарядку вместе с самокатом?", "Самокат приезжает к вам с полной зарядкой. Этого хватает на восемь суток — даже если будете кататься без передышек и во сне. Зарядка не понадобится."},
-                {6, "Можно ли отменить заказ?", "Да, пока самокат не привезли. Штрафа не будет, объяснительной записки тоже не попросим. Все же свои."},
-                {7, "Я живу за МКАДом, привезёте?", "Да, обязательно. Всем самокатов! И Москве, и Московской области." },
+                {0, HOW_MUCH_0, PRICE_DAY_0},
+                {1, WANT_MORE_SCOOTER_1, ONE_ORDER_ONE_SCOOTER_1},
+                {2, HOW_CALCULATE_2, ABOUT_RENT_TIME_2},
+                {3, WANT_SCOOTER_TODAY_3, ONLY_TOMORROW_3},
+                {4, WANT_EXTEND_RETURN_4, URGENT_1010_4},
+                {5, WANT_CHARGER_5, FULL_CHARGED_5},
+                {6, WANT_CANCEL_ORDER_6, ALL_OWN_6},
+                {7, BEYOND_MKAD_7, DELIVERY_AREA_7},
         };
-    }
-
-    @Before
-    public void begin() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox", "--headless", "--disable-dev-shm-usage");
-        driver = new ChromeDriver(options);
-        driver.get(MAIN_PAGE_URL);
-    }
-
-    @After
-    public void teardown() {
-        driver.quit();
     }
 
     // Заголовки и текст соответствуют тестовым данным
     @Test
-    public void checkAccordionHeaderAndTextIsCorrect() {
-        MainPage objMainPage = new MainPage(driver);
-        objMainPage.waitForLoad();
-        objMainPage.clickOnAcceptCookieButton();
-        objMainPage.clickAccordionHeader(indexNumber);
-        objMainPage.waitForLoadAccordionText(indexNumber);
+    public void checkAccordionHeaderAndTextIsCorrectTest() {
+        MainPage mainPage = new MainPage(driver);
+        mainPage.waitForLoad();
+        mainPage.clickOnAcceptCookieButton();
+        mainPage.clickAccordionHeader(indexNumber);
+        mainPage.waitForLoadAccordionText(indexNumber);
 
         MatcherAssert.assertThat("Неверный текст заголовка",
                 expectedAccordionHeader,
-                equalTo(objMainPage.getAccordionHeaderText(indexNumber)));
+                equalTo(mainPage.getAccordionHeaderText(indexNumber)));
 
         MatcherAssert.assertThat("Неверный выпадающий текст",
                 expectedAccordionText,
-                equalTo(objMainPage.getAccordionText(indexNumber)));
+                equalTo(mainPage.getAccordionText(indexNumber)));
+        // Тест падает на седьмом шаге, ошибка в тексте заголовка "Я жи_з_у за МКАДом, привезёте?"
     }
 
 }

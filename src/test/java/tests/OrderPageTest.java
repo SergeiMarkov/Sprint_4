@@ -1,16 +1,9 @@
 package tests;
 
 import org.hamcrest.MatcherAssert;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import pageobject.MainPage;
 import pageobject.OrderPage;
 
@@ -18,19 +11,18 @@ import static org.hamcrest.CoreMatchers.containsString;
 
 @RunWith(Parameterized.class)
 
-public class OrderPageTest {
-    private WebDriver driver;
-    private final String name;
-    private final String surname;
-    private final String address;
-    private final String metro;
-    private final String phone;
-    private final String date;
-    private final String rent;
-    private final String color;
-    private final String comment;
-    private final String expectedSuccessText = "Заказ оформлен";
-    private final static String MAIN_PAGE_URL = "https://qa-scooter.praktikum-services.ru/";
+public class OrderPageTest extends BaseTest {
+
+    public String name;
+    public String surname;
+    public String address;
+    public String metro;
+    public String phone;
+    public String date;
+    public String rent;
+    public String color;
+    public String comment;
+    public String expectedSuccessText = "Заказ оформлен";
 
     public OrderPageTest (String name, String surname, String address,
                           String metro, String phone, String date,
@@ -54,89 +46,47 @@ public class OrderPageTest {
         };
     }
 
-    @Before
-    public void begin() {
-        ChromeOptions options = new ChromeOptions(); // в браузере Chrome тест ожидаемо падает
-        driver = new ChromeDriver(options);
-        driver.get(MAIN_PAGE_URL);
-
-//        FirefoxOptions options = new FirefoxOptions(); //*в браузере Firefox тест проходит,
-//        driver = new FirefoxDriver(options);           // использовал для проверки работы теста
-//        driver.get(MAIN_PAGE_URL);
-    }
-
-    @After
-    public void teardown() {
-        driver.quit();
-    }
-
     // Кликаем кнопку "Заказать" вверху страницы, заполняем все поля тестовыми данными.
     // Ожидаемый результат: статус "Заказ оформлен"
     @Test
-    public void orderAfterClickOnHeaderOrderButton () {
-        MainPage objMainPage = new MainPage(driver);
-        OrderPage objOrderPage = new OrderPage(driver);
+    public void orderAfterClickOnHeaderOrderButtonTest () {
+        MainPage mainPage = new MainPage(driver);
+        OrderPage orderPage = new OrderPage(driver);
+        MainPage.waitForLoad();
+        MainPage.clickOnAcceptCookieButton();
 
-        objMainPage.waitForLoad();
-        objMainPage.clickOnAcceptCookieButton();
-        objMainPage.clickOnHeaderOrderButton();
+        mainPage.clickOnHeaderOrderButton();
 
-        objOrderPage.waitForLoad();
-        objOrderPage.setInputName(name);
-        objOrderPage.setInputSurname(surname);
-        objOrderPage.setInputAddress(address);
-        objOrderPage.setInputMetro(metro);
-        objOrderPage.setInputPhone(phone);
+        orderPage.fillOrdersFields(name, surname, address,
+                metro, phone, date,
+                rent, color, comment);
 
-        objOrderPage.clickOnNextButton();
-
-        objOrderPage.waitForLoad();
-        objOrderPage.setInputDate(date);
-        objOrderPage.setRentPeriod(rent);
-        objOrderPage.setScooterColor(color);
-        objOrderPage.setInputComment(comment);
-
-        objOrderPage.clickOnOrderButton();
-        objOrderPage.clickOnYesButton();
-        objOrderPage.getOrderPlacedText();
+        orderPage.checkOrderAfterFill();
 
         MatcherAssert.assertThat("Не удалось создать новый заказ",
-                objOrderPage.getOrderPlacedText(),
+                orderPage.getOrderPlacedText(),
                 containsString(expectedSuccessText));
     }
 
     // Кликаем кнопку "Заказать" внизу страницы, заполняем все поля тестовыми данными.
     // Ожидаемый результат: статус "Заказ оформлен"
     @Test
-    public void orderAfterClickOnMiddleOrderButton () {
-        MainPage objMainPage = new MainPage(driver);
-        OrderPage objOrderPage = new OrderPage(driver);
+    public void orderAfterClickOnMiddleOrderButtonTest () {
+        MainPage mainPage = new MainPage(driver);
+        OrderPage orderPage = new OrderPage(driver);
+        MainPage.waitForLoad();
+        MainPage.clickOnAcceptCookieButton();
 
-        objMainPage.waitForLoad();
-        objMainPage.clickOnAcceptCookieButton();
-        objMainPage.clickOnMiddleOrderButton();
+        mainPage.clickOnMiddleOrderButton();
 
-        objOrderPage.waitForLoad();
-        objOrderPage.setInputName(name);
-        objOrderPage.setInputSurname(surname);
-        objOrderPage.setInputAddress(address);
-        objOrderPage.setInputMetro(metro);
-        objOrderPage.setInputPhone(phone);
+        orderPage.fillOrdersFields(name, surname, address,
+                metro, phone, date,
+                rent, color, comment);
 
-        objOrderPage.clickOnNextButton();
-
-        objOrderPage.waitForLoad();
-        objOrderPage.setInputDate(date);
-        objOrderPage.setRentPeriod(rent);
-        objOrderPage.setScooterColor(color);
-        objOrderPage.setInputComment(comment);
-
-        objOrderPage.clickOnOrderButton();
-        objOrderPage.clickOnYesButton();
-        objOrderPage.getOrderPlacedText();
+        orderPage.checkOrderAfterFill();
 
         MatcherAssert.assertThat("Не удалось создать новый заказ",
-                objOrderPage.getOrderPlacedText(),
+                orderPage.getOrderPlacedText(),
                 containsString(expectedSuccessText));
     }
 

@@ -1,6 +1,7 @@
 package pageobject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
@@ -8,35 +9,36 @@ import java.time.Duration;
 
 // Класс для главной страницы
 public class MainPage {
-    private final WebDriver driver;
-
+    private static WebDriver driver;
+    // Константа URL для главной страницы Яндекс.Самокат
+    public final static String MAIN_PAGE_URL = "https://qa-scooter.praktikum-services.ru/";
     // Локатор логотипа Яндекс
-    private By headerLogoYandex = By.className("Header_LogoYandex__3TSOI");
+    private final By headerLogoYandex = By.className("Header_LogoYandex__3TSOI");
     // Локатор логотипа Самокат
-    private By headerLogoScooter = By.className("Header_LogoScooter__3lsAR");
+    private final By headerLogoScooter = By.className("Header_LogoScooter__3lsAR");
     // Локатор кнопки "Заказать" вверху страницы
-    private By headerOrderButton = By.className("Button_Button__ra12g");
+    private final By headerOrderButton = By.className("Button_Button__ra12g");
     // Локатор кнопки "Принять куки"
-    private By acceptCookieButton = By.className("App_CookieButton__3cvqF");
+    private static final By acceptCookieButton = By.className("App_CookieButton__3cvqF");
     // Локатор для кнопки "Заказать" внизу страницы
-    private By middleOrderButton = By.xpath(".//button[@class='Button_Button__ra12g Button_Middle__1CSJM']");
+    private final By middleOrderButton = By.xpath(".//button[@class='Button_Button__ra12g Button_Middle__1CSJM']");
 
     //Локатор ссылки "Статус заказа" ввурху страницы
-    private By headerOrderStatusLink = By.className("Header_Link__1TAG7");
+    private final By headerOrderStatusLink = By.className("Header_Link__1TAG7");
     // Локатор поля "Введите номер заказа"
-    private By inputTrack = By.xpath(".//input[contains(@placeholder,'Введите')]");
+    private final By inputTrack = By.xpath(".//input[contains(@placeholder,'Введите')]");
     // Локатор кнопки "Go!"
-    private By goButton = By.xpath(".//button[contains(@class,'Header_Button__28dPO')]");
+    private final By goButton = By.xpath(".//button[contains(@class,'Header_Button__28dPO')]");
     // Локатор картинки "Номер заказа не найден"
     public By trackImgNotFound = By.xpath(".//img[@src='/assets/not-found.png']");
 
     // Локатор заголовка раскрывающегося списка
-    private By accordionHeader = By.xpath(".//div[starts-with(@id, 'accordion__heading-')]");
+    private final By accordionHeader = By.xpath(".//div[starts-with(@id, 'accordion__heading-')]");
     // Локатор текста внутри раскрывающегося списка
-    private By accordionText = By.xpath(".//div[starts-with(@id, 'accordion__panel-')]");
+    private final By accordionText = By.xpath(".//div[starts-with(@id, 'accordion__panel-')]");
 
     // Локатор картинки самоката (для ожидания загрузки)
-    private By scooterImage = By.xpath(".//img[@src='/assets/blueprint.png']");
+    private static final By scooterImage = By.xpath(".//img[@src='/assets/blueprint.png']");
 
     // Конструктор класса MainPage
     public MainPage(WebDriver driver) {
@@ -44,20 +46,18 @@ public class MainPage {
     }
 
     // Метод для ожидания загрузки
-    public void waitForLoad() {
+    public static void waitForLoad() {
         new WebDriverWait(driver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.visibilityOfElementLocated(scooterImage));
     }
-
+    // Метод клика по кнопке "Принять куки"
+    public static void clickOnAcceptCookieButton() {
+        driver.findElement(acceptCookieButton).click();
+    }
 
     // Метод клика по кнопке "Заказать" в хэддере
     public void clickOnHeaderOrderButton() {
         driver.findElement(headerOrderButton).click();
-    }
-
-    // Метод клика по кнопке "Принять куки"
-    public void clickOnAcceptCookieButton() {
-        driver.findElement(acceptCookieButton).click();
     }
 
     // Метод клика по кнопке "Статус заказа"
@@ -103,10 +103,16 @@ public class MainPage {
         new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.elementToBeClickable(goButton)).click();
     }
-    // Метод для ожидания загрузки
+    // Метод для ожидания загрузки Картинки
     public void waitForLoadNotFoundPic() {
         new WebDriverWait(driver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.visibilityOfElementLocated(trackImgNotFound));
     }
+    // Метод для клика по логотипу Самока
+    public void clickOnLinkScooter() {
+        new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.elementToBeClickable(headerLogoScooter)).click();
+    }
 
 }
+

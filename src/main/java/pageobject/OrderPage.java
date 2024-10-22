@@ -14,7 +14,7 @@ public class OrderPage {
     private final WebDriver driver;
 
     // Локатор формы заказа
-    private  By orderForm = By.xpath(".//div[@class='Order_Form__17u6u']");
+    private By orderForm = By.xpath(".//div[@class='Order_Form__17u6u']");
 
     // Локаторы для страницы заказа "Для кого самокат"
 
@@ -69,7 +69,7 @@ public class OrderPage {
     }
 
     //Метод для выбора элемента из выпадающего списка
-    private void clickOnElementFromDropdown (By dropdownElements, String elementToChoose) {
+    private void clickOnElementFromDropdown(By dropdownElements, String elementToChoose) {
         List<WebElement> elementsFiltered = driver.findElements(dropdownElements);
         for (WebElement element : elementsFiltered) {
             if (element.getText().equals(elementToChoose)) {
@@ -152,4 +152,32 @@ public class OrderPage {
     public String getOrderPlacedText() {
         return driver.findElement(orderPlace).getText();
     }
+
+    // Метод для заполнения полей заказа
+    public void fillOrdersFields(String name, String surname, String address,
+                                 String metro, String phone, String date,
+                                 String rent, String color, String comment) {
+        waitForLoad();
+        setInputName(name);
+        setInputSurname(surname);
+        setInputAddress(address);
+        setInputMetro(metro);
+        setInputPhone(phone);
+
+        clickOnNextButton();
+
+        waitForLoad();
+        setInputDate(date);
+        setRentPeriod(rent);
+        setScooterColor(color);
+        setInputComment(comment);
+
+    }
+    // Метод для проверки заказа после заполнения полей заказа
+    public void checkOrderAfterFill() {
+        clickOnOrderButton();
+        clickOnYesButton();
+        getOrderPlacedText();
+    }
+
 }
